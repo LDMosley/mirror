@@ -172,11 +172,11 @@ def tzclock():
 def weather(curr_time):
     global city_msg
     # Enter your API key here
-    api_key = "API KEY HERE"
+    api_key = 'YOUR API KEY'
 
     # base urls for Openweathermap.org
-    base_url = "http://api.openweathermap.org/data/2.5/weather?"
-    forecast = "http://api.openweathermap.org/data/2.5/forecast?"
+    base_url = 'http://api.openweathermap.org/data/2.5/weather?'
+    forecast = 'http://api.openweathermap.org/data/2.5/forecast?'
 
     cities = [('Laurel', 'Maryland'), ('Huntsville', 'Alabama'), ('Atlanta', 'Georgia'), ('Las Vegas', 'Nevada')]
     city_res = {}
@@ -184,7 +184,7 @@ def weather(curr_time):
     forecast_url = forecast + '&q=' + cities[0][0] + ',' + cities[0][1] + '&APPID=' + api_key
 
     def temp_con(temp):
-        degree_sign = u"\N{DEGREE SIGN}"
+        degree_sign = u'\N{DEGREE SIGN}'
         k_to_f = int(temp * 1.8 - 459.57)  # converts Kelvin to Fahrenheit
         return str(k_to_f) + degree_sign
 
@@ -197,11 +197,11 @@ def weather(curr_time):
             response = requests.get(complete_url)
             results = response.json()
 
-            if results["cod"] == 200:
-                curr_weat = results["main"]
-                curr_temp = temp_con(curr_weat["temp"])
-                curr_hum = str(curr_weat["humidity"]) + '%'
-                descr = results["weather"][0]["main"]
+            if results['cod'] == 200:
+                curr_weat = results['main']
+                curr_temp = temp_con(curr_weat['temp'])
+                curr_hum = str(curr_weat['humidity']) + '%'
+                descr = results['weather'][0]['main']
 
             city_res[city_name] = curr_temp, curr_hum, descr
 
@@ -338,7 +338,7 @@ main_window.geometry('600x1080')
 bc_canvas = Canvas(main_window, width=290, height=420, bd=0, highlightthickness=2, bg='black')
 weat_canvas = Canvas(main_window, width=280, height=420, bd=0, highlightthickness=2, bg='black')
 msg_canvas = Canvas(main_window, width=580, height=155, bd=3, highlightthickness=2, bg='black')
-speed_canvas = Canvas(main_window, width=580, height=150, bd=3, highlightthickness=2, bg='black')
+speed_canvas = Canvas(main_window, width=580, height=150, bd=3, highlightthickness=2, bg='white')
 ph_canvas = Canvas(main_window, width=580, height=15, bd=0, highlightthickness=0, bg='black')
 ph2_canvas = Canvas(main_window, width=580, height=15, bd=0, highlightthickness=0, bg='black')
 ph3_canvas = Canvas(main_window, width=580, height=15, bd=0, highlightthickness=0, bg='black')
@@ -412,26 +412,26 @@ next_temp = Frame(weat_canvas, bg='black', width=200, height=165, bd=0)
 cities_temp = Frame(weat_canvas, bg='black', width=230, height=50, bd=0)
 
 deg = u'\N{DEGREE SIGN}'
-main_temp = Label(pri_temp, text='30' + deg, bg='black', fg='white', font='arial 58 bold')
-main_hum = Label(pri_temp, text='Humidity: 10%', bg='black', fg='white', font='arial 12 bold')
-main_desc = Label(pri_temp, text='Thunderstorm', bg='black', fg='white', font='arial 14 bold')
+main_temp = Label(pri_temp, text=' ', bg='black', fg='white', font='arial 58 bold')
+main_hum = Label(pri_temp, text=' ', bg='black', fg='white', font='arial 12 bold')
+main_desc = Label(pri_temp, text=' ', bg='black', fg='white', font='arial 14 bold')
 main_desc.place(x=100, y=25, anchor=CENTER)
 main_temp.place(x=100, y=85, anchor=CENTER)
 main_hum.place(x=100, y=140, anchor=CENTER)
 
-next_day = Label(next_temp, text='Sat  30' + deg + ' Thunderstorm', bg='black', fg='white',
+next_day = Label(next_temp, text=' ', bg='black', fg='white',
                  font='arial 12 bold',
                  anchor=W, justify=LEFT)
-next_day1 = Label(next_temp, text='Sun  30' + deg + ' Rain', bg='black', fg='white',
+next_day1 = Label(next_temp, text=' ', bg='black', fg='white',
                   font='arial 12 bold',
                   anchor=W, justify=LEFT)
-next_day2 = Label(next_temp, text='Mon  30' + deg + ' Clouds', bg='black', fg='white',
+next_day2 = Label(next_temp, text=' ', bg='black', fg='white',
                   font='arial 12 bold',
                   anchor=W, justify=LEFT)
-next_day3 = Label(next_temp, text='Tues  30' + deg + ' Clear', bg='black', fg='white',
+next_day3 = Label(next_temp, text=' ', bg='black', fg='white',
                   font='arial 12 bold',
                   anchor=W, justify=LEFT)
-next_day4 = Label(next_temp, text='Wed  30' + deg + ' Thunderstorm', bg='black', fg='white',
+next_day4 = Label(next_temp, text=' ', bg='black', fg='white',
                   font='arial 12 bold',
                   anchor=W, justify=LEFT)
 next_day.place(x=10, y=25, anchor=W)
@@ -458,9 +458,9 @@ msg_canvas.create_window(300, 75, window=quote_msg)
 msg_canvas.create_line(10, 15, 580, 15, fill='white', width=3)
 msg_canvas.create_line(10, 140, 580, 140, fill='white', width=3)
 
-down_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor="white", highlightthickness=2)
-up_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor="white", highlightthickness=2)
-ping_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor="white", highlightthickness=2)
+down_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
+up_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
+ping_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
 speed_canvas.create_window(100, 80, window=down_speed)
 speed_canvas.create_window(295, 80, window=up_speed)
 speed_canvas.create_window(490, 80, window=ping_speed)
@@ -475,13 +475,13 @@ up_label = Label(up_speed, text='Upload', bg='black', fg='white', font='arial 14
                  justify=LEFT)
 up_label.place(x=95, y=20, anchor=CENTER)
 
-ping_msg = Label(ping_speed, text='6', bg='black', fg='white', font='arial 45 bold', anchor=W,
+ping_msg = Label(ping_speed, text=' ', bg='black', fg='white', font='arial 45 bold', anchor=W,
                  justify=CENTER)
 ping_msg.place(x=95, y=75, anchor=CENTER)
-down_msg = Label(down_speed, text='188', bg='black', fg='white', font='arial 45 bold', anchor=W,
+down_msg = Label(down_speed, text=' ', bg='black', fg='white', font='arial 45 bold', anchor=W,
                  justify=CENTER)
 down_msg.place(x=95, y=75, anchor=CENTER)
-up_msg = Label(up_speed, text='14', bg='black', fg='white', font='arial 45 bold', anchor=W,
+up_msg = Label(up_speed, text=' ', bg='black', fg='white', font='arial 45 bold', anchor=W,
                justify=CENTER)
 up_msg.place(x=95, y=75, anchor=CENTER)
 ping_unit = Label(ping_speed, text='ms', bg='black', fg='white', font='arial 12 bold', anchor=W,
@@ -496,16 +496,16 @@ up_unit.place(x=95, y=115, anchor=CENTER)
 asof_label = Label(up_speed, text='As of: ', bg='black', fg='white', font='arial 10 bold', anchor=W,
                    justify=CENTER)
 asof_label.place(x=35, y=140, anchor=CENTER)
-asof_msg = Label(up_speed, text='59 minutes ago', bg='black', fg='white', font='arial 10 bold', anchor=W,
+asof_msg = Label(up_speed, text=' ', bg='black', fg='white', font='arial 10 bold', anchor=W,
                  justify=CENTER)
 asof_msg.place(x=106, y=140, anchor=CENTER)
 
 # ====================================== End of Layout =====================================================#
 
 
-# TODO: code weather function --- degree_sign = u"\N{DEGREE SIGN}"
+# TODO: code weather function --- degree_sign = u'\N{DEGREE SIGN}'
 # TODO: code some sort of information presentation functions (quotes, news, ... ?)
 
-# main_window.attributes("-fullscreen", True)
+# main_window.attributes('-fullscreen', True)
 change()
 main_window.mainloop()
