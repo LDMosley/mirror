@@ -172,7 +172,7 @@ def tzclock():
 def weather(curr_time):
     global city_msg
     # Enter your API key here
-    api_key = 'YOUR API KEY HERE'
+    api_key = 'c28f59a9bb82459a0013c88d372071a2'
 
     # base urls for Openweathermap.org
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -301,9 +301,9 @@ def message(curr_time):
 
 
 def speed(curr_time):
-    st = speedtest.Speedtest()
 
     if curr_time.minute == 0 and curr_time.second == 0:
+        st = speedtest.Speedtest()
         down_res = (st.download() / 1000) / 1000
         up_res = (st.upload() / 1000) / 1000
         ping_res = st.results.ping
