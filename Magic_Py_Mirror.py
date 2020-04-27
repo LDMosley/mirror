@@ -172,7 +172,7 @@ def tzclock():
 def weather(curr_time):
     global city_msg
     # Enter your API key here
-    api_key = 'YOUR API KEY'
+    api_key = 'c28f59a9bb82459a0013c88d372071a2'
 
     # base urls for Openweathermap.org
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -292,7 +292,8 @@ def message(curr_time):
             'He Who Breaks A Thing To Find Out What It Is, Has Left The Path Of Wisdom',
             'Reality Is Merely An Illusion, Albeit A Very Persistent One',
             'We Do Not Follow Maps To Buried Treasure, And X Never, Ever Marks The Spot.',
-            'Fantasy Is The Impossible Made Probable. Science Fiction Is The Improbable Made Possible']
+            'Fantasy Is The Impossible Made Probable. Science Fiction Is The Improbable Made Possible',
+            'The Ability To Speak Does Not Make You Intelligent ']
 
     # Randomly choices an quote from the list every 15 minutes with a slot machine-like effect
     if curr_time.minute % 15 == 0 and curr_time.second == 0:
@@ -311,7 +312,7 @@ def speed(curr_time):
         up_msg['text'] = str(int(up_res))
         ping_msg['text'] = str(int(ping_res))
 
-        asof_msg['text'] = str(curr_time.second) + ' minutes ago'
+    asof_msg['text'] = str(curr_time.minute) + ' minutes ago'
 
 
 
@@ -335,10 +336,10 @@ main_window.configure(bg='black')
 main_window.geometry('600x1080')
 
 # creates the different canvases 
-bc_canvas = Canvas(main_window, width=290, height=420, bd=0, highlightthickness=2, bg='black')
-weat_canvas = Canvas(main_window, width=280, height=420, bd=0, highlightthickness=2, bg='black')
-msg_canvas = Canvas(main_window, width=580, height=155, bd=3, highlightthickness=2, bg='black')
-speed_canvas = Canvas(main_window, width=580, height=150, bd=3, highlightthickness=2, bg='white')
+bc_canvas = Canvas(main_window, width=290, height=420, bd=0, highlightthickness=4, bg='black')
+weat_canvas = Canvas(main_window, width=280, height=420, bd=0, highlightthickness=4, bg='black')
+msg_canvas = Canvas(main_window, width=580, height=155, bd=3, highlightthickness=4, bg='black')
+speed_canvas = Canvas(main_window, width=580, height=150, bd=3, highlightthickness=4, bg='white')
 ph_canvas = Canvas(main_window, width=580, height=15, bd=0, highlightthickness=0, bg='black')
 ph2_canvas = Canvas(main_window, width=580, height=15, bd=0, highlightthickness=0, bg='black')
 ph3_canvas = Canvas(main_window, width=580, height=15, bd=0, highlightthickness=0, bg='black')
