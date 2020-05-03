@@ -2,11 +2,17 @@ from tkinter import *
 from datetime import datetime
 from pytz import timezone
 from collections import defaultdict, Counter
-import requests, random, speedtest, json
+import requests, random, speedtest, feedparser
 
 ticker = 0
+tock = 0
+tick = 0
 last_seen = 60
+
 city_msg = 'All data will be updated soon    '
+hack_msg = 'Cybersecurity news feed will be updated soon    Cybersecurity news feed will be updated soon  '
+news_msg = 'Technology  news feed will be updated soon     Technology  news feed will be updated soon     '
+
 
 
 def binclock():
@@ -171,8 +177,8 @@ def tzclock():
 
 def weather(curr_time):
     global city_msg
-    # Enter your openweathermap API key here
-    api_key = 'API Key'
+    # Enter your API key here
+    api_key = 'c28f59a9bb82459a0013c88d372071a2'
 
     # base urls for Openweathermap.org
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -300,9 +306,9 @@ def message(curr_time):
         quote_msg['text'] = random.choice(motd)
 
 
-def speed(curr_time):
+def speed(time_now):
 
-    if curr_time.minute == 0 and curr_time.second == 0:
+    if time_now.minute == 0 and time_now.second == 0:
         st = speedtest.Speedtest()
         down_res = (st.download() / 1000) / 1000
         up_res = (st.upload() / 1000) / 1000
@@ -312,9 +318,68 @@ def speed(curr_time):
         up_msg['text'] = str(int(up_res))
         ping_msg['text'] = str(int(ping_res))
 
-    asof_msg['text'] = str(curr_time.minute) + ' minutes ago'
+    asof_msg['text'] = str(time_now.minute) + ' minutes ago'
 
+def img_switch(curr_time):
 
+    global imgs
+
+    # choices a random image to display ever 2 minutes
+    if curr_time.minute % 2 == 0 and curr_time.second == 0:
+        img_file = random.choice(imgs)
+        logo_label.configure(image=img_file)
+
+def feed(curr_time):
+
+    global started
+    global hack_msg
+    global news_msg
+
+    # Retrieves RSS feeds every 30 minutes
+    if curr_time.minute == 0 and curr_time.second == 0:
+        hack_msg = ''
+        news_msg = ''
+        gov_feeds = feedparser.parse('https://threatpost.com/category/government/feed/')
+        tech_feeds = feedparser.parse('https://www.techrepublic.com/rssfeeds/articles/')
+
+        vuln_title['text'] = 'Threat News:       '
+        for entry in gov_feeds.entries:
+            hack_msg = hack_msg + '   ' + entry.title + ':  ' + entry.summary
+
+        tech_title['text'] = 'Technology News:'
+        for tech in tech_feeds.entries:
+            news_msg = news_msg + '   ' + tech.title + ':  ' + tech.summary
+
+    if curr_time.minute == 30 and curr_time.second == 0:
+        hack_msg = ''
+        news_msg = ''
+        vul_feeds = feedparser.parse('https://threatpost.com/category/vulneravilities/feed/')
+        hack_feeds = feedparser.parse('https://threatpost.com/category/hacks/feed/')
+
+        vuln_title['text'] = 'Cybersecurity News:'
+        for vul in vul_feeds.entries:
+            hack_msg = hack_msg + '   ' + vul.title + ':  ' + vul.summary
+
+        tech_title['text'] = 'Intrusion News:   '
+        for hack in hack_feeds.entries:
+            news_msg = news_msg + '   ' + hack.title + ':  ' + hack.summary
+
+    global tick
+    global tock
+
+    tick += 1
+    if tick <= len(hack_msg):
+        vuln_feed['text'] = hack_msg[tick:] + hack_msg[:tick]
+    else:
+        tick = 0
+        vuln_feed['text'] = hack_msg
+
+    tock += 1
+    if tock <= len(news_msg):
+        tech_feed['text'] = news_msg[tock:] + news_msg[:tock]
+    else:
+        tock = 0
+        tech_feed['text'] = news_msg
 
 def change():
     curr_time = datetime.now()
@@ -322,11 +387,18 @@ def change():
     tzclock()
     weather(curr_time)
     message(curr_time)
-    speed(curr_time)
+    feed(curr_time)
+
+    img_switch(curr_time)
 
     bc_canvas.update()
 
     bc_canvas.after(200, change)
+
+def update():
+    time_now = datetime.now()
+    speed(time_now)
+    speed_canvas.after(1000, update)
 
 
 
@@ -340,10 +412,10 @@ bc_canvas = Canvas(main_window, width=290, height=420, bd=0, highlightthickness=
 weat_canvas = Canvas(main_window, width=280, height=420, bd=0, highlightthickness=4, bg='black')
 msg_canvas = Canvas(main_window, width=1250, height=155, bd=3, highlightthickness=4, bg='black')
 speed_canvas = Canvas(main_window, width=625, height=150, bd=3, highlightthickness=4, bg='white')
-img_canvas = Canvas(main_window, width=660, height=418, bd=3, highlightthickness=4, bg='green')
+img_canvas = Canvas(main_window, width=660, height=418, bd=0, highlightthickness=0, bg='black')
 ph_canvas = Canvas(main_window, width=800, height=15, bd=0, highlightthickness=0, bg='black')
 ph2_canvas = Canvas(main_window, width=390, height=15, bd=0, highlightthickness=0, bg='black')
-feed_canvas = Canvas(main_window, width=608, height=150, bd=3, highlightthickness=4, bg='red')
+feed_canvas = Canvas(main_window, width=608, height=150, bd=3, highlightthickness=4, bg='black')
 
 # positions the canvases 
 bc_canvas.grid(row=0, column=0)
@@ -464,6 +536,8 @@ msg_canvas.create_window(600, 75, window=quote_msg)
 msg_canvas.create_line(50, 15, 1200, 15, fill='white', width=3)
 msg_canvas.create_line(50, 140, 1200, 140, fill='white', width=3)
 
+
+# Creates the layout and labels to display the results of a speed test.
 down_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
 up_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
 ping_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
@@ -507,8 +581,44 @@ asof_msg = Label(up_speed, text=' ', bg='black', fg='white', font='Sans-serif 10
 asof_msg.place(x=106, y=140, anchor=CENTER)
 
 # Creates area to display a image
-logo_frame = Frame(img_canvas, bg='black', width=400, height=400, bd=0, highlightcolor='white', highlightthickness=2)
+logo_frame = Canvas(img_canvas, bg='green', width=400, height=390, bd=0,  highlightthickness=0)
 img_canvas.create_window(330, 209, window=logo_frame)
+
+# Loads the list of images
+auto = PhotoImage(file='auto.png')
+avenge = PhotoImage(file='avenge.png')
+cat = PhotoImage(file='cat.png')
+cobra = PhotoImage(file='cobra.png')
+decept = PhotoImage(file='decept.png')
+hawks = PhotoImage(file='hawks.png')
+hydra = PhotoImage(file='hydra.png')
+lod = PhotoImage(file='lod.png')
+shield = PhotoImage(file='shield.png')
+xmen = PhotoImage(file='x.png')
+
+imgs = [auto, avenge, cat, cobra, decept, hawks, hydra, lod, shield, xmen]
+
+logo_label = Label(logo_frame, image=cat, bg='black')
+logo_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+# Creates labels to display news tickers
+
+news_frame = Frame(feed_canvas, bg='black', width=590, height=140, bd=0, highlightthickness=0)
+feed_canvas.create_window(306, 82, window=news_frame)
+vuln_title = Label(news_frame, text='Cybersecurity News:', bg='black', fg='white', font='Sans-serif 10 bold', anchor=CENTER,
+                   justify=CENTER)
+vuln_title.place(x=70, y=10, anchor=CENTER)
+vuln_feed = Label(feed_canvas, text='', bg='black', fg='white', font='Sans-serif 12 bold', anchor=W,
+                  justify=RIGHT, width=56, height=1)
+vuln_feed.place(x=20, y=50, anchor=W)
+tech_title = Label(news_frame, text='Technology News:', bg='black', fg='white', font='Sans-serif 10 bold', anchor=CENTER,
+                   justify=CENTER)
+tech_title.place(x=70, y=70, anchor=CENTER)
+tech_feed = Label(feed_canvas, text='', bg='black', fg='white', font='Sans-serif 12 bold', anchor=W,
+                  justify=RIGHT, width=56, height=1)
+tech_feed.place(x=20, y=110, anchor=W)
+
+
 
 # ====================================== End of Layout =====================================================#
 
@@ -518,4 +628,5 @@ img_canvas.create_window(330, 209, window=logo_frame)
 
 # main_window.attributes('-fullscreen', True)
 change()
+update()
 main_window.mainloop()
