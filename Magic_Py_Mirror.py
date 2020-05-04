@@ -178,7 +178,7 @@ def tzclock():
 def weather(curr_time):
     global city_msg
     # Enter your API key here
-    api_key = 'API KEY'
+    api_key = 'c28f59a9bb82459a0013c88d372071a2'
 
     # base urls for Openweathermap.org
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -301,14 +301,14 @@ def message(curr_time):
             'Fantasy Is The Impossible Made Probable. Science Fiction Is The Improbable Made Possible',
             'The Ability To Speak Does Not Make You Intelligent ']
 
-    # Randomly choices an quote from the list every 15 minutes with a slot machine-like effect
-    if curr_time.minute % 15 == 0 and curr_time.second == 0:
+    # Randomly choices an quote from the list every 10 minutes with a slot machine-like effect
+    if curr_time.minute % 10 == 0 and curr_time.second == 0:
         quote_msg['text'] = random.choice(motd)
 
 
 def speed(time_now):
 
-    if time_now.minute == 0 and time_now.second == 0:
+    if time_now.minute == 20 and time_now.second == 0:
         st = speedtest.Speedtest()
         down_res = (st.download() / 1000) / 1000
         up_res = (st.upload() / 1000) / 1000
@@ -318,14 +318,18 @@ def speed(time_now):
         up_msg['text'] = str(int(up_res))
         ping_msg['text'] = str(int(ping_res))
 
-    asof_msg['text'] = str(time_now.minute) + ' minutes ago'
+    if time_now.minute >= 20:
+        asof_msg['text'] = str(time_now.minute - 20) + ' minutes ago'
+    else:
+        asof_msg['text'] = str(time_now.minute + 40) + ' minutes ago'
+
 
 def img_switch(curr_time):
 
     global imgs
 
-    # choices a random image to display ever 2 minutes
-    if curr_time.minute % 2 == 0 and curr_time.second == 0:
+    # choices a random image to display ever 15 minutes
+    if curr_time.minute % 15 == 0 and curr_time.second == 0:
         img_file = random.choice(imgs)
         logo_label.configure(image=img_file)
 
@@ -412,7 +416,7 @@ bc_canvas = Canvas(main_window, width=290, height=420, bd=0, highlightthickness=
 weat_canvas = Canvas(main_window, width=280, height=420, bd=0, highlightthickness=4, bg='black')
 msg_canvas = Canvas(main_window, width=1250, height=155, bd=3, highlightthickness=4, bg='black')
 speed_canvas = Canvas(main_window, width=625, height=150, bd=3, highlightthickness=4, bg='white')
-img_canvas = Canvas(main_window, width=660, height=418, bd=0, highlightthickness=0, bg='black')
+img_canvas = Canvas(main_window, width=660, height=418, bd=0, highlightthickness=4, bg='black')
 ph_canvas = Canvas(main_window, width=800, height=15, bd=0, highlightthickness=0, bg='black')
 ph2_canvas = Canvas(main_window, width=390, height=15, bd=0, highlightthickness=0, bg='black')
 feed_canvas = Canvas(main_window, width=608, height=150, bd=3, highlightthickness=4, bg='black')
