@@ -1,0 +1,4 @@
+speedtest-cli
+feedparser
+pytz
+requests
