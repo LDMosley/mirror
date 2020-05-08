@@ -176,7 +176,7 @@ def tzclock():
 def weather(curr_time):
     global city_msg
     # Enter your API key here
-    api_key = ''
+    api_key = 'API KEY'
 
     # base urls for Openweathermap.org
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
