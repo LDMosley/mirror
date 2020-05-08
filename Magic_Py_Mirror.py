@@ -14,12 +14,10 @@ hack_msg = 'Cybersecurity news feed will be updated soon    Cybersecurity news f
 news_msg = 'Technology  news feed will be updated soon     Technology  news feed will be updated soon     '
 
 
-
 def binclock():
     curr_time = datetime.now()
-    local['text'] = curr_time.strftime('%a  %b %m, %Y')
+    local['text'] = curr_time.strftime('%a  %b %d, %Y')
 
-    # global hour1, hour2, minute1, minute2, sec1, sec2
     # coverts each digit in current time to a binary string representation with leading zeros
     hour1 = str(bin(int(str(curr_time.hour).zfill(2)[0]))[2:]).zfill(2)
     hour2 = str(bin(int(str(curr_time.hour).zfill(2)[1]))[2:]).zfill(4)
@@ -178,7 +176,7 @@ def tzclock():
 def weather(curr_time):
     global city_msg
     # Enter your API key here
-    api_key = 'c28f59a9bb82459a0013c88d372071a2'
+    api_key = ''
 
     # base urls for Openweathermap.org
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -194,80 +192,83 @@ def weather(curr_time):
         k_to_f = int(temp * 1.8 - 459.57)  # converts Kelvin to Fahrenheit
         return str(k_to_f) + degree_sign
 
-    # Retrieves Current weather for cities in cities list every hour
-    if curr_time.minute == 0 and curr_time.second == 0:
+    # Retrieves Current weather for cities in cities list every hour from 6 a.m. to 10 p.m.
+    if 6 <= curr_time.hour <= 22 and curr_time.minute == 0 and curr_time.second == 0:
         # retrieves the current weather of all locations in the cities list and saves the results to a dictionary
-        for location in cities:
-            (city_name, state_name) = location
-            complete_url = base_url + '&q=' + city_name + ',' + state_name + '&APPID=' + api_key  # required query url
-            response = requests.get(complete_url)
-            results = response.json()
+        try:
+            for location in cities:
+                (city_name, state_name) = location
+                complete_url = base_url + '&q=' + city_name + ',' + state_name + '&APPID=' + api_key  # required query url
+                response = requests.get(complete_url)
+                results = response.json()
 
-            if results['cod'] == 200:
-                curr_weat = results['main']
-                curr_temp = temp_con(curr_weat['temp'])
-                curr_hum = str(curr_weat['humidity']) + '%'
-                descr = results['weather'][0]['main']
+                if results['cod'] == 200:
+                    curr_weat = results['main']
+                    curr_temp = temp_con(curr_weat['temp'])
+                    curr_hum = str(curr_weat['humidity']) + '%'
+                    descr = results['weather'][0]['main']
 
-            city_res[city_name] = curr_temp, curr_hum, descr
+                city_res[city_name] = curr_temp, curr_hum, descr
 
-        main_temp['text'] = city_res['Laurel'][0]
-        main_hum['text'] = 'Humidity:  ' + city_res['Laurel'][1]
-        main_desc['text'] = city_res['Laurel'][2]
+            main_temp['text'] = city_res['Laurel'][0]
+            main_hum['text'] = 'Humidity:  ' + city_res['Laurel'][1]
+            main_desc['text'] = city_res['Laurel'][2]
 
-        spacer = ' ' * 3
-        gap = ' ' * 7
-        hum = 'Humidity: '
-        city_msg = gap + 'Huntsville' + spacer + city_res['Huntsville'][0] + spacer + city_res['Huntsville'][2] \
-                   + spacer + hum + city_res['Huntsville'][1] + gap + 'Atlanta' + spacer + city_res['Atlanta'][0] \
-                   + spacer + city_res['Atlanta'][2] + spacer + hum + city_res['Atlanta'][1] + gap \
-                   + 'Las Vegas' + spacer + city_res['Las Vegas'][0] + spacer + city_res['Las Vegas'][2] \
-                   + spacer + hum + city_res['Las Vegas'][1]
+            spacer = ' ' * 3
+            gap = ' ' * 7
+            hum = 'Humidity: '
+            city_msg = gap + 'Huntsville' + spacer + city_res['Huntsville'][0] + spacer + city_res['Huntsville'][2] \
+                       + spacer + hum + city_res['Huntsville'][1] + gap + 'Atlanta' + spacer + city_res['Atlanta'][0] \
+                       + spacer + city_res['Atlanta'][2] + spacer + hum + city_res['Atlanta'][1] + gap \
+                       + 'Las Vegas' + spacer + city_res['Las Vegas'][0] + spacer + city_res['Las Vegas'][2] \
+                       + spacer + hum + city_res['Las Vegas'][1]
 
-        # Retrieves the weather for the next five days
-        five_day = requests.get(forecast_url)
-        fday_res = five_day.json()
-        fmt = '%Y-%m-%d'
-        check = curr_time.strftime(fmt)
+            # Retrieves the weather for the next five days
+            five_day = requests.get(forecast_url)
+            fday_res = five_day.json()
+            fmt = '%Y-%m-%d'
+            check = curr_time.strftime(fmt)
 
-        upcoming = []
-        final = []
-        for_res = defaultdict(list)
+            upcoming = []
+            final = []
+            for_res = defaultdict(list)
 
-        for item in fday_res['list']:
-            day = item['dt_txt'].split()
-            temp_date = day[0]
-            my_date = day[0].split('-')
-            for_temp = item['main']['temp']
-            for_weat = item['weather'][0]['main']
+            for item in fday_res['list']:
+                day = item['dt_txt'].split()
+                temp_date = day[0]
+                my_date = day[0].split('-')
+                for_temp = item['main']['temp']
+                for_weat = item['weather'][0]['main']
 
-            if check != temp_date:
-                weekday = datetime(int(my_date[0]), int(my_date[1]), int(my_date[2])).strftime('%a')
-                data = weekday, for_temp, for_weat
-                upcoming.append(data)
+                if check != temp_date:
+                    weekday = datetime(int(my_date[0]), int(my_date[1]), int(my_date[2])).strftime('%a')
+                    data = weekday, for_temp, for_weat
+                    upcoming.append(data)
 
-        for day_of_week, degrees, weather_type in upcoming:
-            conditions = degrees, weather_type
-            for_res[day_of_week].append(conditions)
+            for day_of_week, degrees, weather_type in upcoming:
+                conditions = degrees, weather_type
+                for_res[day_of_week].append(conditions)
 
-        for day_next in for_res:
-            temp_hi = []
-            temp_type = []
-            for pattern in for_res[day_next]:
-                temp_hi.append(pattern[0])
-                temp_type.append(pattern[1])
-            counts = dict(Counter(temp_type))
-            fin_type = list(counts.keys())[list(counts.values()).index(max(counts.values()))]
+            for day_next in for_res:
+                temp_hi = []
+                temp_type = []
+                for pattern in for_res[day_next]:
+                    temp_hi.append(pattern[0])
+                    temp_type.append(pattern[1])
+                counts = dict(Counter(temp_type))
+                fin_type = list(counts.keys())[list(counts.values()).index(max(counts.values()))]
 
-            day_fin = day_next, temp_con(max(temp_hi)), fin_type
+                day_fin = day_next, temp_con(max(temp_hi)), fin_type
 
-            final.append(day_fin)
+                final.append(day_fin)
 
-        next_day['text'] = '  '.join(final[0])
-        next_day1['text'] = '  '.join(final[1])
-        next_day2['text'] = '  '.join(final[2])
-        next_day3['text'] = '  '.join(final[3])
-        next_day4['text'] = '  '.join(final[4])
+            next_day['text'] = '  '.join(final[0])
+            next_day1['text'] = '  '.join(final[1])
+            next_day2['text'] = '  '.join(final[2])
+            next_day3['text'] = '  '.join(final[3])
+            next_day4['text'] = '  '.join(final[4])
+        except Exception as e:
+            pass
 
     global ticker
 
@@ -307,25 +308,26 @@ def message(curr_time):
 
 
 def speed(time_now):
-
     if time_now.minute == 20 and time_now.second == 0:
-        st = speedtest.Speedtest()
-        down_res = (st.download() / 1000) / 1000
-        up_res = (st.upload() / 1000) / 1000
-        ping_res = st.results.ping
+        try:
+            st = speedtest.Speedtest()
+            down_res = (st.download() / 1000) / 1000
+            up_res = (st.upload() / 1000) / 1000
+            ping_res = st.results.ping
 
-        down_msg['text'] = str(int(down_res))
-        up_msg['text'] = str(int(up_res))
-        ping_msg['text'] = str(int(ping_res))
+            down_msg['text'] = str(int(down_res))
+            up_msg['text'] = str(int(up_res))
+            ping_msg['text'] = str(int(ping_res))
+        except Exception as e:
+            pass
 
-    if time_now.minute >= 20:
-        asof_msg['text'] = str(time_now.minute - 20) + ' minutes ago'
+    if time_now.minute >= 25:
+        asof_msg['text'] = str(time_now.minute - 25) + ' minutes ago'
     else:
-        asof_msg['text'] = str(time_now.minute + 40) + ' minutes ago'
+        asof_msg['text'] = str(time_now.minute + 35) + ' minutes ago'
 
 
 def img_switch(curr_time):
-
     global imgs
 
     # choices a random image to display ever 15 minutes
@@ -333,9 +335,8 @@ def img_switch(curr_time):
         img_file = random.choice(imgs)
         logo_label.configure(image=img_file)
 
-def feed(curr_time):
 
-    global started
+def feed(curr_time):
     global hack_msg
     global news_msg
 
@@ -385,6 +386,7 @@ def feed(curr_time):
         tock = 0
         tech_feed['text'] = news_msg
 
+
 def change():
     curr_time = datetime.now()
     binclock()
@@ -399,11 +401,11 @@ def change():
 
     bc_canvas.after(200, change)
 
+
 def update():
     time_now = datetime.now()
     speed(time_now)
     speed_canvas.after(1000, update)
-
 
 
 # ====================== Layout =====================================================================#
@@ -429,7 +431,7 @@ ph_canvas.grid(row=1, column=0, columnspan=4)
 msg_canvas.grid(row=2, column=0, columnspan=4)
 ph2_canvas.grid(row=3, column=0, columnspan=4)
 speed_canvas.grid(row=4, column=0, columnspan=2)
-feed_canvas.grid(row=4, column=2,  columnspan=2)
+feed_canvas.grid(row=4, column=2, columnspan=2)
 
 # creates the rectangles used for the binary clock
 bin_frame = Frame(bc_canvas, bg='black', width=210, height=170, bd=0, highlightthickness=0)
@@ -461,7 +463,7 @@ sec04 = binner_canvas.create_rectangle(170, 140, 190, 160, fill=b)
 
 local = Label(binner_canvas, text='Apr 22, 2020', fg='white', bg='black', font='Sans-serif 12 bold', anchor=W,
               justify=LEFT)
-binner_canvas.create_window(120, 20, window=local, anchor=CENTER)
+binner_canvas.create_window(114, 20, window=local, anchor=CENTER)
 
 # bc_canvas.create_line(345, 100, 345, 170, fill='white', width=4)
 
@@ -540,7 +542,6 @@ msg_canvas.create_window(600, 75, window=quote_msg)
 msg_canvas.create_line(50, 15, 1200, 15, fill='white', width=3)
 msg_canvas.create_line(50, 140, 1200, 140, fill='white', width=3)
 
-
 # Creates the layout and labels to display the results of a speed test.
 down_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
 up_speed = Frame(speed_canvas, bg='black', width=190, height=160, bd=0, highlightcolor='white', highlightthickness=2)
@@ -582,10 +583,10 @@ asof_label = Label(up_speed, text='As of: ', bg='black', fg='white', font='Sans-
 asof_label.place(x=35, y=140, anchor=CENTER)
 asof_msg = Label(up_speed, text=' ', bg='black', fg='white', font='Sans-serif 10 bold', anchor=W,
                  justify=CENTER)
-asof_msg.place(x=106, y=140, anchor=CENTER)
+asof_msg.place(x=111, y=140, anchor=CENTER)
 
 # Creates area to display a image
-logo_frame = Canvas(img_canvas, bg='green', width=400, height=390, bd=0,  highlightthickness=0)
+logo_frame = Canvas(img_canvas, bg='green', width=400, height=390, bd=0, highlightthickness=0)
 img_canvas.create_window(330, 209, window=logo_frame)
 
 # Loads the list of images
@@ -609,20 +610,20 @@ logo_label.place(x=0, y=0, relwidth=1, relheight=1)
 
 news_frame = Frame(feed_canvas, bg='black', width=590, height=140, bd=0, highlightthickness=0)
 feed_canvas.create_window(306, 82, window=news_frame)
-vuln_title = Label(news_frame, text='Cybersecurity News:', bg='black', fg='white', font='Sans-serif 10 bold', anchor=CENTER,
+vuln_title = Label(news_frame, text='Cybersecurity News:', bg='black', fg='white', font='Sans-serif 10 bold',
+                   anchor=CENTER,
                    justify=CENTER)
-vuln_title.place(x=70, y=10, anchor=CENTER)
+vuln_title.place(x=79, y=10, anchor=CENTER)
 vuln_feed = Label(feed_canvas, text='', bg='black', fg='white', font='Sans-serif 12 bold', anchor=W,
                   justify=RIGHT, width=56, height=1)
 vuln_feed.place(x=20, y=50, anchor=W)
-tech_title = Label(news_frame, text='Technology News:', bg='black', fg='white', font='Sans-serif 10 bold', anchor=CENTER,
+tech_title = Label(news_frame, text='Technology News:', bg='black', fg='white', font='Sans-serif 10 bold',
+                   anchor=CENTER,
                    justify=CENTER)
 tech_title.place(x=70, y=70, anchor=CENTER)
 tech_feed = Label(feed_canvas, text='', bg='black', fg='white', font='Sans-serif 12 bold', anchor=W,
                   justify=RIGHT, width=56, height=1)
 tech_feed.place(x=20, y=110, anchor=W)
-
-
 
 # ====================================== End of Layout =====================================================#
 
