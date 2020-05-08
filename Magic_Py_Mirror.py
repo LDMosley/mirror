@@ -193,7 +193,7 @@ def weather(curr_time):
         return str(k_to_f) + degree_sign
 
     # Retrieves Current weather for cities in cities list every hour from 6 a.m. to 10 p.m.
-    if 6 <= curr_time.hour <= 22 and curr_time.minute == 0 and curr_time.second == 0:
+    if curr_time.minute == 0 and curr_time.second == 0:
         # retrieves the current weather of all locations in the cities list and saves the results to a dictionary
         try:
             for location in cities:
@@ -349,11 +349,11 @@ def feed(curr_time):
 
         vuln_title['text'] = 'Threat News:       '
         for entry in gov_feeds.entries:
-            hack_msg = hack_msg + '   ' + entry.title + ':  ' + entry.summary
+            hack_msg = hack_msg + '   ' + entry.title + ':  ' + entry.summary + ' | '
 
         tech_title['text'] = 'Technology News:'
         for tech in tech_feeds.entries:
-            news_msg = news_msg + '   ' + tech.title + ':  ' + tech.summary
+            news_msg = news_msg + '   ' + tech.title + ':  ' + tech.summary + ' | '
 
     if curr_time.minute == 30 and curr_time.second == 0:
         hack_msg = ''
@@ -363,11 +363,11 @@ def feed(curr_time):
 
         vuln_title['text'] = 'Cybersecurity News:'
         for vul in vul_feeds.entries:
-            hack_msg = hack_msg + '   ' + vul.title + ':  ' + vul.summary
+            hack_msg = hack_msg + '   ' + vul.title + ':  ' + vul.summary + ' | '
 
         tech_title['text'] = 'Intrusion News:   '
         for hack in hack_feeds.entries:
-            news_msg = news_msg + '   ' + hack.title + ':  ' + hack.summary
+            news_msg = news_msg + '   ' + hack.title + ':  ' + hack.summary + ' | '
 
     global tick
     global tock
@@ -387,24 +387,55 @@ def feed(curr_time):
         tech_feed['text'] = news_msg
 
 
+def blank():
+    bc_canvas.grid_remove()
+    weat_canvas.grid_remove()
+    img_canvas.grid_remove()
+    ph_canvas.grid_remove()
+    msg_canvas.grid_remove()
+    ph2_canvas.grid_remove()
+    speed_canvas.grid_remove()
+    feed_canvas.grid_remove()
+
+
+def wake():
+    bc_canvas.grid()
+    weat_canvas.grid()
+    img_canvas.grid()
+    ph_canvas.grid()
+    msg_canvas.grid()
+    ph2_canvas.grid()
+    speed_canvas.grid()
+    feed_canvas.grid()
+
+
 def change():
     curr_time = datetime.now()
-    binclock()
-    tzclock()
-    weather(curr_time)
-    message(curr_time)
-    feed(curr_time)
 
-    img_switch(curr_time)
+    if 6 <= curr_time.hour <= 22:
+        binclock()
+        tzclock()
+        weather(curr_time)
+        message(curr_time)
+        feed(curr_time)
+        img_switch(curr_time)
 
     bc_canvas.update()
-
     bc_canvas.after(200, change)
 
 
 def update():
     time_now = datetime.now()
-    speed(time_now)
+
+    if 6 <= time_now.hour <= 22:
+        speed(time_now)
+
+    if time_now.hour == 5 and time_now.minute == 59 and time_now.second == 30:
+        wake()
+
+    if time_now.hour == 22 and time_now.minute == 30 and time_now.second == 0:
+        blank()
+
     speed_canvas.after(1000, update)
 
 
