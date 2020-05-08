@@ -176,7 +176,7 @@ def tzclock():
 def weather(curr_time):
     global city_msg
     # Enter your API key here
-    api_key = ''
+    api_key = 'c28f59a9bb82459a0013c88d372071a2'
 
     # base urls for Openweathermap.org
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -358,7 +358,7 @@ def feed(curr_time):
     if curr_time.minute == 30 and curr_time.second == 0:
         hack_msg = ''
         news_msg = ''
-        vul_feeds = feedparser.parse('https://threatpost.com/category/vulneravilities/feed/')
+        vul_feeds = feedparser.parse('https://threatpost.com/category/vulnerabilities/feed/')
         hack_feeds = feedparser.parse('https://threatpost.com/category/hacks/feed/')
 
         vuln_title['text'] = 'Cybersecurity News:'
@@ -615,14 +615,14 @@ vuln_title = Label(news_frame, text='Cybersecurity News:', bg='black', fg='white
                    justify=CENTER)
 vuln_title.place(x=79, y=10, anchor=CENTER)
 vuln_feed = Label(feed_canvas, text='', bg='black', fg='white', font='Sans-serif 12 bold', anchor=W,
-                  justify=RIGHT, width=56, height=1)
+                  justify=RIGHT, width=52, height=1)
 vuln_feed.place(x=20, y=50, anchor=W)
 tech_title = Label(news_frame, text='Technology News:', bg='black', fg='white', font='Sans-serif 10 bold',
                    anchor=CENTER,
                    justify=CENTER)
 tech_title.place(x=70, y=70, anchor=CENTER)
 tech_feed = Label(feed_canvas, text='', bg='black', fg='white', font='Sans-serif 12 bold', anchor=W,
-                  justify=RIGHT, width=56, height=1)
+                  justify=RIGHT, width=52, height=1)
 tech_feed.place(x=20, y=110, anchor=W)
 
 # ====================================== End of Layout =====================================================#
